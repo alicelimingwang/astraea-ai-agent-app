@@ -31,7 +31,7 @@
 
 ```
 celestia-fortune-agent/
-├── EVALUATION.md                  # Comprehensive assignment grading rubric document (Max Score 95)
+├── EVALUATION.md                  # Comprehensive evaluation & architecture specification document
 ├── README.md                      # Project overview & usage instructions
 ├── Dockerfile                     # Multi-stage Docker build config
 ├── package.json                   # Dependencies and scripts
@@ -99,13 +99,11 @@ docker run -p 5000:5000 astraea-ai-agent
 
 ## 📊 Evaluation Criteria Mapping
 
-This repository is built to meet the **95-point maximum score** for agentic application evaluation:
-
-1. **Tool & Interface Design (15 pts)**: Light macaron UI, vertically centered input card, downloadable report, and interactive chat pills.
-2. **Context & Memory (15 pts)**: Session state retention for multi-turn Q&A without re-asking birth details.
-3. **Orchestration & Logic (25 pts)**: Deterministic Ganzhi math + Zi Wei matrix + Tarot RNG -> Generative synthesis with unknown time handling modes.
-4. **Observability & Tracing (20 pts)**: OpenTelemetry span tracking & dedicated "Logic & Traces" left nav view.
-5. **Infrastructure & CI/CD (20 pts)**: Multi-stage Dockerfile, FastAPI backend, and GitHub Actions CI/CD pipeline.
+1. **Tool & Interface Design**: Light macaron UI, vertically centered input card, downloadable report, and interactive chat pills.
+2. **Context & Memory**: Session state retention for multi-turn Q&A without re-asking birth details.
+3. **Orchestration & Logic**: Deterministic Ganzhi math + Zi Wei matrix + Tarot RNG -> Generative synthesis with unknown time handling modes.
+4. **Observability & Tracing**: OpenTelemetry span tracking & dedicated "Logic & Traces" left nav view.
+5. **Infrastructure & CI/CD**: Multi-stage Dockerfile, FastAPI backend, and GitHub Actions CI/CD pipeline.
 
 See [`EVALUATION.md`](file:///home/admin_limingwang_altostrat_com/celestia-fortune-agent/EVALUATION.md) for full details.
 

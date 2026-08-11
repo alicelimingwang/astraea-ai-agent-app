@@ -1,7 +1,6 @@
 # Astraea AI: Evaluation & Architecture Specification
 
 > **Project Name:** Astraea AI — Metaphysical Destiny Intelligence Engine  
-> **Target Evaluation Score:** 95 / 95 (Maximum Score)  
 > **Primary Modalities:** Bazi (Four/Three Pillars), Zi Wei Dou Shu (12 Palaces), Tarot Card Divination  
 
 ---
@@ -14,9 +13,9 @@ The system accepts Gregorian calendar birth details, handles unknown birth times
 
 ---
 
-## Evaluation Criteria Mapping (95 Point Rubric)
+## Evaluation Criteria Mapping
 
-### 1. Tool & Interface Design (Max Score: 15 Points)
+### 1. Tool & Interface Design
 - **Hybrid Interface Architecture**: 
   - **Phase 1 (Vertically Centered Input Form)**: Modern, accessible Gregorian date picker, time selector with unknown-time handling options (Default to Peak Solar Hour vs 3-Pillars Mode), and gender selection.
   - **Phase 2 (Visual Fate Report)**: Interactive visual cards displaying calculated Four/Three Pillars, Zi Wei Palaces, Tarot cards, and four domain analysis tabs (**Career**, **Love**, **Health**, **Family & Wealth**).
@@ -27,11 +26,11 @@ The system accepts Gregorian calendar birth details, handles unknown birth times
   - `calculateZiWei(date, baziData)`
   - `drawTarotSpread(spreadType)`
 
-### 2. Context & Memory (Max Score: 15 Points)
+### 2. Context & Memory
 - **Short-Term Session Context**: Maintains active birth chart state, Day Master, Five Elements distribution, and drawn cards in React session state so multi-turn chat queries retain complete context without requesting re-entry of birth details.
 - **Persistent Profile & Conversation Memory**: Multi-turn conversation history is preserved across turns and passed into the synthesis engine to maintain consistent voice, context, and persona.
 
-### 3. Orchestration & Logic (Max Score: 25 Points)
+### 3. Orchestration & Logic
 - **Deterministic-First Workflow**:
   ```
   User Input -> Validation -> Deterministic Math Tools (Ganzhi / Palaces / Deck RNG) 
@@ -45,7 +44,7 @@ The system accepts Gregorian calendar birth details, handles unknown birth times
   - *Synthesis Engine*: Merges outputs into a coherent narrative covering Career, Love, Health, and Family.
   - *Follow-Up Prompt Generator*: Generates 3 contextual follow-up question pills after every answer.
 
-### 4. Observability & Tracing (Max Score: 20 Points)
+### 4. Observability & Tracing
 - **Dedicated Left Nav View (Logic & Traces)**: Evaluators can click "Logic & Traces" in the left navigation sidebar to view real-time execution spans.
 - **Span-Based Tracing**: OpenTelemetry / Cloud Trace integration tracking every step from input parsing to tool execution and LLM response generation.
 - **Structured Payload Logs**: JSON logging capturing execution latency (ms), token usage, tool parameter validity, and system prompts.
@@ -53,7 +52,7 @@ The system accepts Gregorian calendar birth details, handles unknown birth times
   - *Faithfulness*: Verifies LLM interpretation matches calculated Ganzhi / Tarot cards.
   - *Safety Guardrails*: Appends empathetic disclaimers for sensitive topics.
 
-### 5. Infrastructure & CI/CD (Max Score: 20 Points)
+### 5. Infrastructure & CI/CD
 - **Containerization**: Single-command container build using multi-stage `Dockerfile`.
 - **Backend API**: Python FastAPI application (`backend/main.py`) serving API endpoints.
 - **CI/CD Pipeline (GitHub Actions)**: `.github/workflows/ci.yml` configuring automated testing, linting, production build, and deployment.
@@ -62,7 +61,7 @@ The system accepts Gregorian calendar birth details, handles unknown birth times
 
 ## Evaluation Benchmark Suite & Metrics
 
-| Benchmark Category | Metric | Evaluation Method | Target Score | Achieved |
+| Benchmark Category | Metric | Evaluation Method | Target | Achieved |
 | :--- | :--- | :--- | :--- | :--- |
 | **Ganzhi Accuracy** | Calendar Calculation | Astronomical Ganzhi Sexagenary Math | 100% | **100%** |
 | **Interpretation Faithfulness** | LLM-as-Judge | Checks if report matches calculated elements | ≥ 95% | **98%** |
