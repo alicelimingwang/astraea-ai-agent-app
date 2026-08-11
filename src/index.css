@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #FAF7F2;
+    color: #334155;
+    background-image: 
+      radial-gradient(circle at 10% 20%, rgba(252, 231, 243, 0.4) 0%, transparent 35%),
+      radial-gradient(circle at 90% 80%, rgba(243, 232, 255, 0.4) 0%, transparent 40%);
+    background-attachment: fixed;
+  }
+}
+
+.macaron-card {
+  background: #FFFFFF;
+  border: 1px solid #F3EFEA;
+  box-shadow: 0 10px 30px -5px rgba(225, 29, 72, 0.04), 0 4px 15px -2px rgba(100, 116, 139, 0.03);
+  border-radius: 1.25rem;
+}
+
+.macaron-card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.macaron-card-hover:hover {
+  box-shadow: 0 12px 35px -4px rgba(244, 63, 94, 0.12);
+  transform: translateY(-2px);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FAF7F2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #F43F5E;
+}
