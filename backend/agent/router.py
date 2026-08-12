@@ -19,14 +19,14 @@ class ModelRouter:
         if is_full_report or len(prompt) > 200 or any(k in prompt.lower() for k in ["report", "synthesis", "comprehensive", "5000", "bazi"]):
             return {
                 "route": "deep_synthesis_route",
-                "recommended_model": "gemini-2.5-pro",
+                "recommended_model": "gemini-3.5-flash",
                 "required_agents": ["BaziSpecialistAgent", "ZiWeiSpecialistAgent", "TarotDivinationAgent", "MasterSynthesisAgent"],
                 "reason": "Request requires multi-domain destiny calculation and long-form narrative synthesis."
             }
         else:
             return {
                 "route": "fast_route",
-                "recommended_model": "gemini-2.5-flash",
+                "recommended_model": "gemini-3.5-flash",
                 "required_agents": ["ConversationalOracleAgent"],
                 "reason": "Request is a direct follow-up question suitable for fast conversational response."
             }

@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Calendar, Clock, AlertCircle, Sparkles, Moon, ArrowRight } from 'lucide-react';
+import { translations } from '../utils/translations';
 
-export default function InputForm({ onSubmit, isLoading, isReportGenerated }) {
+export default function InputForm({ onSubmit, isLoading, isReportGenerated, lang = 'en' }) {
+  const t = translations[lang] || translations.en;
+
   const [birthDate, setBirthDate] = useState('1996-08-18');
   const [birthTime, setBirthTime] = useState('14:30');
   const [isUnknownTime, setIsUnknownTime] = useState(false);
@@ -39,13 +42,13 @@ export default function InputForm({ onSubmit, isLoading, isReportGenerated }) {
           </div>
           <div>
             <h3 className="font-serif font-bold text-base text-slate-800 flex items-center gap-2">
-              <span>Enter Birth Details</span>
+              <span>{t.enterBirthDetails}</span>
               <span className="text-[10px] font-sans text-rose-600 bg-macaron-rose px-2 py-0.5 rounded-full">
-                Gregorian Calendar
+                {t.gregorianCalendar}
               </span>
             </h3>
             <p className="text-xs text-slate-500 font-sans">
-              Provide your date of birth to calculate your Four Pillars & Zi Wei destiny matrix.
+              {t.formSubtitle}
             </p>
           </div>
         </div>
@@ -59,7 +62,7 @@ export default function InputForm({ onSubmit, isLoading, isReportGenerated }) {
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold text-slate-700 flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-rose-500" />
-                <span>Date of Birth</span>
+                <span>{t.dateOfBirth}</span>
               </label>
               <input
                 type="date"
@@ -75,7 +78,7 @@ export default function InputForm({ onSubmit, isLoading, isReportGenerated }) {
               <div className="flex items-center justify-between">
                 <label className="text-xs font-semibold text-slate-700 flex items-center gap-2">
                   <Clock className="w-4 h-4 text-rose-500" />
-                  <span>Time of Birth</span>
+                  <span>{t.timeOfBirth}</span>
                 </label>
                 
                 <label className="flex items-center gap-1.5 text-xs text-rose-700 cursor-pointer">
@@ -85,7 +88,7 @@ export default function InputForm({ onSubmit, isLoading, isReportGenerated }) {
                     onChange={(e) => setIsUnknownTime(e.target.checked)}
                     className="rounded border-slate-300 text-rose-600 focus:ring-rose-200"
                   />
-                  <span>Time unknown</span>
+                  <span>{t.timeUnknown}</span>
                 </label>
               </div>
 
@@ -99,7 +102,7 @@ export default function InputForm({ onSubmit, isLoading, isReportGenerated }) {
               ) : (
                 <div className="w-full bg-macaron-peach/80 border border-rose-200 rounded-xl p-2.5 text-xs text-rose-900 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
-                  <span>Exact hour omitted; handling mode below applies.</span>
+                  <span>{t.unknownModeNotice}</span>
                 </div>
               )}
             </div>
@@ -111,7 +114,7 @@ export default function InputForm({ onSubmit, isLoading, isReportGenerated }) {
             <div className="p-4 rounded-xl bg-macaron-peach/60 border border-rose-200 space-y-2 text-xs">
               <p className="font-semibold text-rose-900 flex items-center gap-1.5">
                 <Moon className="w-3.5 h-3.5 text-rose-500" />
-                <span>Hour Pillar Adjustment Options:</span>
+                <span>{t.hourPillarOptions}</span>
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

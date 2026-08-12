@@ -14,11 +14,11 @@ def test_model_routing():
     """Tests model router logic for fast route vs deep synthesis route."""
     fast_route = model_router.route_query("What is my daily horoscope?", is_full_report=False)
     assert fast_route["route"] == "fast_route"
-    assert fast_route["recommended_model"] == "gemini-2.5-flash"
+    assert fast_route["recommended_model"] == "gemini-3.5-flash"
 
     deep_route = model_router.route_query("Generate full synthesis destiny report", is_full_report=True)
     assert deep_route["route"] == "deep_synthesis_route"
-    assert deep_route["recommended_model"] == "gemini-2.5-pro"
+    assert deep_route["recommended_model"] == "gemini-3.5-flash"
 
 
 def test_guardrails_input_and_disclaimer():
@@ -64,3 +64,15 @@ async def test_orchestrator_synthesis_run():
     assert "tarot_data" in result
     assert "synthesis_report" in result
     assert len(result["synthesis_report"]) > 100
+
+
+@pytest.mark.asyncio
+async def test_different_questions_distinct_answers():
+    """Regression test ensuring different follow-up chat questions produce distinct, specific answers."""
+    res_career = await orchestrator.run_conversational_chat("What is my career outlook?", session_id="test_distinct_q_session")
+    res_love = await orchestrator.run_conversational_chat("How is my love life?", session_id="test_distinct_q_session")
+
+    assert res_career["status"] == "success"
+    assert res_love["status"] == "success"
+    assert res_career["answer"] != res_love["answer"], "Different questions must return distinct answers"
+

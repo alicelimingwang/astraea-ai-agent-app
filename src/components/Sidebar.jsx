@@ -1,7 +1,10 @@
 import React from 'react';
-import { Moon, Compass, Activity, ShieldCheck, Sparkles, Eye } from 'lucide-react';
+import { Moon, Compass, Activity, Sparkles, Eye } from 'lucide-react';
+import { translations } from '../utils/translations';
 
-export default function Sidebar({ activeNav, setActiveNav, traceCount }) {
+export default function Sidebar({ activeNav, setActiveNav, traceCount, lang = 'en' }) {
+  const t = translations[lang] || translations.en;
+
   return (
     <aside className="w-full md:w-60 bg-white border-r border-slate-200/60 p-5 flex flex-col justify-between shrink-0">
       <div>
@@ -16,7 +19,7 @@ export default function Sidebar({ activeNav, setActiveNav, traceCount }) {
             </h1>
             <p className="text-[11px] text-slate-500 font-sans flex items-center gap-1">
               <Sparkles className="w-3 h-3 text-rose-400" />
-              <span>Destiny Oracle</span>
+              <span>{t.destinyOracle}</span>
             </p>
           </div>
         </div>
@@ -32,7 +35,7 @@ export default function Sidebar({ activeNav, setActiveNav, traceCount }) {
             }`}
           >
             <Compass className="w-4 h-4 text-rose-500" />
-            <span>Destiny Reading</span>
+            <span>{t.destinyReading}</span>
           </button>
 
           <button
@@ -45,7 +48,7 @@ export default function Sidebar({ activeNav, setActiveNav, traceCount }) {
           >
             <div className="flex items-center gap-3">
               <Activity className="w-4 h-4 text-purple-600" />
-              <span>Logic & Traces</span>
+              <span>{t.logicTraces}</span>
             </div>
             {traceCount > 0 && (
               <span className="px-2 py-0.5 rounded-full bg-purple-200 text-purple-900 text-[10px] font-bold">
@@ -60,7 +63,7 @@ export default function Sidebar({ activeNav, setActiveNav, traceCount }) {
       <div className="pt-4 border-t border-slate-100 text-[11px] text-slate-400 space-y-1">
         <div className="flex items-center gap-1.5 text-rose-600 font-medium">
           <Eye className="w-3.5 h-3.5" />
-          <span>Astraea Metaphysics</span>
+          <span>{t.metaphysics}</span>
         </div>
       </div>
     </aside>

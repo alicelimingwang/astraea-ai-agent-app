@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, Terminal, Clock, Cpu, CheckCircle2, RefreshCw, ShieldCheck } from 'lucide-react';
+import { Activity, Terminal, Clock, RefreshCw, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { translations } from '../utils/translations';
 
-export default function LogicTracesView({ traces }) {
+export default function LogicTracesView({ traces, lang = 'en' }) {
+  const t = translations[lang] || translations.en;
   const [backendSpans, setBackendSpans] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -42,10 +44,10 @@ export default function LogicTracesView({ traces }) {
           </div>
           <div>
             <h3 className="font-serif font-bold text-lg text-slate-800">
-              OpenTelemetry Agent Observability & Distributed Traces
+              {t.logicTracesTitle}
             </h3>
             <p className="text-xs text-slate-500">
-              Live inspection of backend OpenTelemetry spans, latency (ms), intent vs outcome logs, and PII redaction.
+              {t.logicTracesSubtitle}
             </p>
           </div>
         </div>
@@ -56,7 +58,7 @@ export default function LogicTracesView({ traces }) {
           className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-          <span>Refresh Traces</span>
+          <span>{lang === 'zh' ? '刷新追蹤記錄' : 'Refresh Traces'}</span>
         </button>
       </div>
 
@@ -69,7 +71,7 @@ export default function LogicTracesView({ traces }) {
 
         {displaySpans.length === 0 ? (
           <div className="p-8 text-center text-xs text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-            No OpenTelemetry spans recorded yet. Submit birth details in the "Destiny Reading" tab to trigger backend agent execution.
+            {t.noTracesYet}
           </div>
         ) : (
           <div className="space-y-3">

@@ -13,6 +13,7 @@ import { synthesizeGeneralFateReport, answerFollowUpQuestion } from './utils/aiS
 
 export default function App() {
   const [activeNav, setActiveNav] = useState('reading'); // 'reading' or 'traces'
+  const [lang, setLang] = useState('en'); // 'en' or 'zh'
 
   const [baziData, setBaziData] = useState(null);
   const [ziweiData, setZiweiData] = useState(null);
@@ -42,12 +43,14 @@ export default function App() {
         birthTime: formData.birthTime,
         unknownTimeMode: formData.unknownTimeMode,
         gender: formData.gender,
-      });
+      }, lang);
       setReportData(report);
 
       const welcomeMsg = {
         role: 'agent',
-        text: `✨ Astraea AI has analyzed your destiny matrix based on your ${bazi.mode}. Feel free to ask any follow-up questions about your career, love, health, or fortune below!`,
+        text: lang === 'zh'
+          ? `✨ Astraea AI 命理智能已根據您的 ${bazi.mode} 排出命盤。歡迎在下方追問關於事業、感情、健康或財運的任何命理問題！`
+          : `✨ Astraea AI has analyzed your destiny matrix based on your ${bazi.mode}. Feel free to ask any follow-up questions about your career, love, health, or fortune below!`,
       };
       setMessages([welcomeMsg]);
       setSuggestedQuestions(report.suggestedQuestions || []);
@@ -93,7 +96,7 @@ export default function App() {
     setIsLoading(true);
 
     try {
-      const response = await answerFollowUpQuestion(questionText, baziData, ziweiData, tarotData);
+      const response = await answerFollowUpQuestion(questionText, baziData, ziweiData, tarotData, lang);
 
       const agentMsg = { role: 'agent', text: response.answerText };
       setMessages((prev) => [...prev, agentMsg]);
@@ -116,13 +119,14 @@ export default function App() {
         activeNav={activeNav}
         setActiveNav={setActiveNav}
         traceCount={traces.length}
+        lang={lang}
       />
 
       {/* Main Content Workspace */}
       <div className="flex-1 flex flex-col min-w-0">
         
-        {/* Header with Astraea AI & 2-sentence app signature */}
-        <Header />
+        {/* Header with Astraea AI & top-right language switcher button */}
+        <Header lang={lang} setLang={setLang} />
 
         {/* Page Content */}
         <main className="p-6 md:p-8 max-w-5xl w-full mx-auto space-y-6">
@@ -134,6 +138,7 @@ export default function App() {
                 onSubmit={handleFormSubmit}
                 isLoading={isLoading}
                 isReportGenerated={!!reportData}
+                lang={lang}
               />
 
               {/* Fate Report Output */}
@@ -143,6 +148,7 @@ export default function App() {
                   baziData={baziData}
                   ziweiData={ziweiData}
                   tarotData={tarotData}
+                  lang={lang}
                 />
               )}
 
@@ -153,13 +159,14 @@ export default function App() {
                   suggestedQuestions={suggestedQuestions}
                   onSendMessage={handleSendMessage}
                   isLoading={isLoading}
+                  lang={lang}
                 />
               )}
             </>
           )}
 
           {activeNav === 'traces' && (
-            <LogicTracesView traces={traces} />
+            <LogicTracesView traces={traces} lang={lang} />
           )}
 
         </main>

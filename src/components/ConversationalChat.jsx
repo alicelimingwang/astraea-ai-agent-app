@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Sparkles, User, Bot, Moon, Eye, HelpCircle } from 'lucide-react';
+import { Send, Sparkles, User, Bot, Moon, HelpCircle } from 'lucide-react';
+import { translations } from '../utils/translations';
 
-export default function ConversationalChat({ messages, suggestedQuestions, onSendMessage, isLoading }) {
+export default function ConversationalChat({ messages, suggestedQuestions, onSendMessage, isLoading, lang = 'en' }) {
+  const t = translations[lang] || translations.en;
   const [inputText, setInputText] = useState('');
   const messagesEndRef = useRef(null);
 
@@ -31,7 +33,7 @@ export default function ConversationalChat({ messages, suggestedQuestions, onSen
       <div className="flex items-center gap-2 pb-3 mb-4 border-b border-slate-100">
         <Moon className="w-4 h-4 text-rose-500" />
         <h3 className="font-serif font-bold text-base text-slate-800">
-          Astraea Destiny Oracle Chat
+          {t.askFollowUp}
         </h3>
       </div>
 
@@ -71,7 +73,7 @@ export default function ConversationalChat({ messages, suggestedQuestions, onSen
         {isLoading && (
           <div className="flex items-center gap-2 text-xs text-rose-600 italic">
             <Sparkles className="w-4 h-4 text-rose-500 animate-spin" />
-            <span>Consulting the Astraea oracle...</span>
+            <span>Consulting Astraea AI...</span>
           </div>
         )}
 
@@ -83,7 +85,7 @@ export default function ConversationalChat({ messages, suggestedQuestions, onSen
         <div className="mb-4 pt-3 border-t border-slate-100 space-y-2">
           <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
             <HelpCircle className="w-3.5 h-3.5 text-rose-500" />
-            <span>Suggested Oracle Questions</span>
+            <span>{t.suggestedFollowUps}</span>
           </p>
 
           <div className="flex flex-wrap gap-2">
@@ -108,7 +110,7 @@ export default function ConversationalChat({ messages, suggestedQuestions, onSen
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          placeholder="Ask Astraea AI a follow-up question..."
+          placeholder={t.askPlaceholder}
           disabled={isLoading}
           className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-4 pr-12 py-2.5 text-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-rose-200 focus:border-rose-400 transition-all"
         />

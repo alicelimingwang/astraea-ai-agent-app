@@ -42,22 +42,52 @@ export function calculateBazi(dateStr, timeStr, unknownTimeMode = 'default_horse
   const month = date.getMonth() + 1; // 1-12
   const day = date.getDate();
 
+  // Solar cutoffs Jan..Dec (approximate start day of each solar month / Jie Qi)
+  const cutoffs = [0, 6, 4, 6, 5, 6, 6, 7, 8, 8, 8, 7, 7];
+
+  let mSolar = 1;
+  let ySolar = year;
+
+  if (day >= cutoffs[month]) {
+    if (month === 1) {
+      mSolar = 12;
+      ySolar = year - 1;
+    } else {
+      mSolar = month - 1;
+      ySolar = year;
+    }
+  } else {
+    if (month === 1) {
+      mSolar = 11;
+      ySolar = year - 1;
+    } else if (month === 2) {
+      mSolar = 12;
+      ySolar = year - 1;
+    } else {
+      mSolar = month - 2;
+      ySolar = year;
+    }
+  }
+
   // Year Pillar calculation
-  // Base offset: Year 4 AD was Jia-Zi (Stem 0, Branch 0)
-  const yearStemIdx = (year - 4) % 10 < 0 ? ((year - 4) % 10) + 10 : (year - 4) % 10;
-  const yearBranchIdx = (year - 4) % 12 < 0 ? ((year - 4) % 12) + 12 : (year - 4) % 12;
+  const yearStemIdx = (ySolar - 4) % 10 < 0 ? ((ySolar - 4) % 10) + 10 : (ySolar - 4) % 10;
+  const yearBranchIdx = (ySolar - 4) % 12 < 0 ? ((ySolar - 4) % 12) + 12 : (ySolar - 4) % 12;
 
-  // Month Pillar calculation (simplified solar term approximation)
-  const monthBranchIdx = (month + 1) % 12; // Yin month starts roughly Feb
-  const monthStemIdx = (yearStemIdx * 2 + month) % 10;
+  // Month Pillar calculation (Five Tigers Chasing Months / 五虎遁月)
+  const sM1 = (((yearStemIdx % 5) * 2 + 2) % 10 + 10) % 10;
+  const monthStemIdx = (((sM1 + mSolar - 1) % 10) + 10) % 10;
+  const monthBranchIdx = (((mSolar + 1) % 12) + 12) % 12;
 
-  // Day Pillar calculation (Julian day number algorithm for day stem/branch)
+  // Day Pillar calculation (Julian Day Number algorithm)
   const a = Math.floor((14 - month) / 12);
   const y = year + 4800 - a;
   const m = month + 12 * a - 3;
   const julianDay = day + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
-  const dayStemIdx = (julianDay + 9) % 10;
-  const dayBranchIdx = (julianDay + 1) % 12;
+  
+  const refJdn = 2451545; // 2000-01-01 JDN was 戊午 (Stem 4, Branch 6)
+  const diff = julianDay - refJdn;
+  const dayStemIdx = (((4 + diff) % 10) + 10) % 10;
+  const dayBranchIdx = (((6 + diff) % 12) + 12) % 12;
 
   // Hour Pillar calculation
   let hourBranchIdx = null;

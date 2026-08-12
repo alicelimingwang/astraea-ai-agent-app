@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Briefcase, Heart, Activity, Coins, Sparkles, Moon, Download, Check, FileText } from 'lucide-react';
 import { generateAndDownloadDetailedReport } from '../utils/reportGenerator';
+import { translations } from '../utils/translations';
 
-export default function GeneralFateReport({ reportData, baziData, ziweiData, tarotData }) {
+export default function GeneralFateReport({ reportData, baziData, ziweiData, tarotData, lang = 'en' }) {
+  const t = translations[lang] || translations.en;
   const [activeTab, setActiveTab] = useState('overview');
 
   if (!reportData) return null;
@@ -65,7 +67,7 @@ export default function GeneralFateReport({ reportData, baziData, ziweiData, tar
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Bazi Pillars
+              {t.baziFourPillars}
             </button>
             <button
               onClick={() => setActiveTab('tarot')}
@@ -75,18 +77,18 @@ export default function GeneralFateReport({ reportData, baziData, ziweiData, tar
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Tarot Spread
+              {t.tarotSpread}
             </button>
           </div>
 
-          {/* Download 5,000-Word Report Button */}
+          {/* Download Report Button */}
           <button
             onClick={handleDownloadReport}
             className="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-medium text-xs shadow-rose-glow flex items-center gap-2 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
-            title="Download full 5,000-word in-depth destiny analysis document"
+            title="Download full detailed destiny analysis document"
           >
             <Download className="w-3.5 h-3.5 text-white" />
-            <span>Download Detailed Report (5,000 Words)</span>
+            <span>{lang === 'zh' ? '下載完整分析報告 (5,000字)' : 'Download Detailed Report (5,000 Words)'}</span>
           </button>
 
         </div>

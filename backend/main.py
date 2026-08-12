@@ -40,11 +40,13 @@ class BirthInput(BaseModel):
     gender: Optional[str] = Field(default="Female", description="'Female' or 'Male'")
     focus_mode: Optional[str] = Field(default="grand_fate", description="'grand_fate' or target domain")
     session_id: Optional[str] = Field(default="default_session", description="Unique user session identifier")
+    language: Optional[str] = Field(default="en", description="Language preference ('en' or 'zh')")
 
 
 class ChatQuery(BaseModel):
     question: str = Field(..., description="Follow-up question string from user")
     session_id: Optional[str] = Field(default="default_session", description="Unique session identifier")
+    language: Optional[str] = Field(default="en", description="Language preference ('en' or 'zh')")
 
 
 class HITLConfirmationInput(BaseModel):
@@ -96,7 +98,8 @@ async def calculate_fate(data: BirthInput):
             unknown_time_mode=data.unknown_time_mode or "default_horse",
             gender=data.gender or "Female",
             focus_mode=data.focus_mode or "grand_fate",
-            session_id=data.session_id or "default_session"
+            session_id=data.session_id or "default_session",
+            language=data.language or "en"
         )
         return result
     except Exception as e:
@@ -111,7 +114,8 @@ async def chat_with_oracle(data: ChatQuery):
     try:
         result = await orchestrator.run_conversational_chat(
             question=data.question,
-            session_id=data.session_id or "default_session"
+            session_id=data.session_id or "default_session",
+            language=data.language or "en"
         )
         return result
     except Exception as e:

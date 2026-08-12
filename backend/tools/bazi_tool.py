@@ -61,16 +61,52 @@ def calculate_bazi_tool(
                 "Chen (Dragon/Earth)", "Si (Snake/Fire)", "Wu (Horse/Fire)", "Wei (Goat/Earth)",
                 "Shen (Monkey/Metal)", "You (Rooster/Metal)", "Xu (Dog/Earth)", "Hai (Pig/Water)"]
 
-    year_idx = (dt.year - 4) % 10
-    year_branch_idx = (dt.year - 4) % 12
+    # Accurate Bazi Sexagenary Ganzhi calculation
+    year = dt.year
+    month = dt.month
+    day = dt.day
+
+    cutoffs = [0, 6, 4, 6, 5, 6, 6, 7, 8, 8, 8, 7, 7]
+
+    if day >= cutoffs[month]:
+        if month == 1:
+            m_solar = 12
+            y_solar = year - 1
+        else:
+            m_solar = month - 1
+            y_solar = year
+    else:
+        if month == 1:
+            m_solar = 11
+            y_solar = year - 1
+        elif month == 2:
+            m_solar = 12
+            y_solar = year - 1
+        else:
+            m_solar = month - 2
+            y_solar = year
+
+    # Year Pillar
+    year_idx = (y_solar - 4) % 10
+    year_branch_idx = (y_solar - 4) % 12
     year_pillar = f"{stems[year_idx]} {branches[year_branch_idx]}"
 
-    month_idx = (dt.month + 1) % 10
-    month_branch_idx = (dt.month + 1) % 12
+    # Month Pillar (Five Tigers Chasing Months)
+    s_m1 = ((year_idx % 5) * 2 + 2) % 10
+    month_idx = (s_m1 + m_solar - 1) % 10
+    month_branch_idx = (m_solar + 1) % 12
     month_pillar = f"{stems[month_idx]} {branches[month_branch_idx]}"
 
-    day_idx = (dt.day + dt.month * 2) % 10
-    day_branch_idx = (dt.day + dt.month) % 12
+    # Day Pillar (Julian Day Number Algorithm)
+    a = (14 - month) // 12
+    y = year + 4800 - a
+    m = month + 12 * a - 3
+    jdn = day + (153 * m + 2) // 5 + 365 * y + y // 4 - y // 100 + y // 400 - 32045
+
+    ref_jdn = 2451545  # 2000-01-01 JDN was 戊午 (Stem 4, Branch 6)
+    diff = jdn - ref_jdn
+    day_idx = (4 + diff) % 10
+    day_branch_idx = (6 + diff) % 12
     day_pillar = f"{stems[day_idx]} {branches[day_branch_idx]}"
     day_master = stems[day_idx]
 
@@ -79,8 +115,16 @@ def calculate_bazi_tool(
         hour_pillar = "Omitted (3-Pillars Mode)"
         mode_label = "3-Pillars Precision Mode"
     else:
-        hour_stem_idx = (day_idx * 2 + 6) % 10
-        hour_pillar = f"{stems[hour_stem_idx]} Wu (Horse/Fire - Default Solar Noon)" if is_unknown else f"{stems[hour_stem_idx]} {branches[6]}"
+        if is_unknown:
+            hours = 12
+        else:
+            try:
+                hours = int(birth_time.split(":")[0])
+            except ValueError:
+                hours = 12
+        hour_branch_idx = ((hours + 1) // 2) % 12
+        hour_stem_idx = (day_idx * 2 + hour_branch_idx) % 10
+        hour_pillar = f"{stems[hour_stem_idx]} Wu (Horse/Fire - Default Solar Noon)" if is_unknown else f"{stems[hour_stem_idx]} {branches[hour_branch_idx]}"
         mode_label = "4-Pillars (Default Solar Peak Hour)" if is_unknown else "4-Pillars Exact Time"
 
     # Wu Xing Distribution
