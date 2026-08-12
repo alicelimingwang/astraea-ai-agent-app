@@ -37,7 +37,12 @@ export default function App() {
       const tarot = drawTarotSpread('three_card');
       setTarotData(tarot);
 
-      const report = synthesizeGeneralFateReport(bazi, ziwei, tarot, formData.focusMode);
+      const report = await synthesizeGeneralFateReport(bazi, ziwei, tarot, formData.focusMode, {
+        birthDate: formData.birthDate,
+        birthTime: formData.birthTime,
+        unknownTimeMode: formData.unknownTimeMode,
+        gender: formData.gender,
+      });
       setReportData(report);
 
       const welcomeMsg = {
@@ -45,7 +50,7 @@ export default function App() {
         text: `✨ Astraea AI has analyzed your destiny matrix based on your ${bazi.mode}. Feel free to ask any follow-up questions about your career, love, health, or fortune below!`,
       };
       setMessages([welcomeMsg]);
-      setSuggestedQuestions(report.suggestedQuestions);
+      setSuggestedQuestions(report.suggestedQuestions || []);
 
       const baziTrace = {
         step: 'Tool Call: calculateBazi()',
@@ -71,7 +76,7 @@ export default function App() {
         },
       };
 
-      setTraces([baziTrace, ziweiTrace, report.traceSpan]);
+      setTraces([baziTrace, ziweiTrace, report.traceSpan].filter(Boolean));
 
     } catch (err) {
       console.error('Error calculating fate report:', err);
@@ -80,22 +85,27 @@ export default function App() {
     }
   };
 
-  const handleSendMessage = (questionText) => {
+  const handleSendMessage = async (questionText) => {
     if (!baziData || !ziweiData || !tarotData) return;
 
     const userMsg = { role: 'user', text: questionText };
     setMessages((prev) => [...prev, userMsg]);
     setIsLoading(true);
 
-    setTimeout(() => {
-      const response = answerFollowUpQuestion(questionText, baziData, ziweiData, tarotData);
+    try {
+      const response = await answerFollowUpQuestion(questionText, baziData, ziweiData, tarotData);
 
       const agentMsg = { role: 'agent', text: response.answerText };
       setMessages((prev) => [...prev, agentMsg]);
-      setSuggestedQuestions(response.suggestedQuestions);
-      setTraces((prev) => [response.traceSpan, ...prev]);
+      setSuggestedQuestions(response.suggestedQuestions || []);
+      if (response.traceSpan) {
+        setTraces((prev) => [response.traceSpan, ...prev]);
+      }
+    } catch (err) {
+      console.error('Error processing follow-up question:', err);
+    } finally {
       setIsLoading(false);
-    }, 500);
+    }
   };
 
   return (
