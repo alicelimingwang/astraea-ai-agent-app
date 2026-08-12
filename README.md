@@ -1,29 +1,34 @@
-# Astraea AI — Metaphysical Destiny Intelligence Engine
+# Astraea AI — Metaphysical Destiny Intelligence Engine (v3.0.0)
 
-> **Astraea AI** is an intelligent hybrid fortune-telling agent (*"Where ancient cosmic wisdom meets modern artificial intelligence"*). It bridges deterministic Chinese & Western metaphysical calculations with generative AI synthesis.
+> **Astraea AI** is an intelligent hybrid fortune-telling agent (*"Where ancient cosmic wisdom meets modern artificial intelligence"*). It bridges deterministic Chinese & Western metaphysical calculations with generative AI synthesis, OpenTelemetry distributed tracing, async memory, and guided LLM tool execution.
 
 ---
 
-## 🌟 Key Features
+## 🌟 Key Architectural Features (v3.0.0)
 
-- **Multi-Modal Divination Engines**:
-  - **Bazi (Four/Three Pillars)**: Sexagenary Ganzhi calendar calculations, Day Master identification, and Five Elements (*Wu Xing*) balance.
-  - **Zi Wei Dou Shu (12 Palaces Matrix)**: Primary star placement across Life, Career, Wealth, Spouse, and Health palaces.
-  - **Tarot Card Divination**: 78-card deck shuffling and 3-card spread (Past/Foundation, Present State, Future Outlook).
-- **Graceful Unknown Birth Time Handling**:
-  - **Mode A (Default Peak Solar Hour)**: Uses the Horse Hour (11:00 AM – 1:00 PM / 午时) with a clear disclosure badge.
-  - **Mode B (3-Pillars Mode)**: Omits the Hour Pillar entirely, calculating Year, Month, and Day pillars for high baseline precision.
-- **Comprehensive General Fate Report**:
-  - Automatically synthesizes insights across 4 key life domains: **Career & Destiny**, **Love & Romance**, **Health & Vitality**, and **Family, Wealth & Prosperity**.
-- **In-Depth Downloadable Report (5,000 Words)**:
-  - Generates and downloads a complete, structured 5,000-word destiny report document (`.md`).
-- **Interactive Conversational Oracle Chat**:
-  - Multi-turn Q&A with dynamic **Suggested Question Pills** rendered after every answer.
-- **Light Macaron UI System**:
-  - Clean, soft rose pink aesthetic (`#FAF7F2` warm canvas, soft pastel cards, no dark/black backgrounds).
-  - Vertically centered date of birth input card before report generation.
-- **Built-in Observability & Tracing**:
-  - Dedicated **"Logic & Traces"** view in the left navigation sidebar displaying real-time execution spans, latency (ms), token usage, and parameter payloads.
+- **Tool & Interface Design**:
+  - Explicit Pydantic v2 JSON Schemas for LLM Tool Calling (`BaziCalculationInput`, `ZiWeiCalculationInput`, `TarotDrawInput`) exported at `/api/tools/schema`.
+  - Comprehensive Google-style docstrings and parameter descriptions across all tool modules.
+  - Guided Error Recovery (`ToolErrorRecovery`) returning step-by-step instructions and suggested fallback arguments upon tool validation failure.
+- **Context & Memory**:
+  - Production System Prompts (`ASTRAEA_SYSTEM_PROMPT`) for persona, guardrails, and tool usage rules.
+  - Async SQLite Database using SQLAlchemy (`UserSession`, `ConversationHistory`, `UserProfile`, `MemorySummary`).
+  - History Compaction (`HistoryCompactor`) compressing long chat turns (>10) into semantic memory summaries.
+- **Orchestration & Logic**:
+  - Google Gemini LLM API integration (`gemini-2.5-flash` / `gemini-2.5-pro`) via `google-genai` with fallback engine.
+  - Multi-Agent Specialist Pattern (`BaziSpecialistAgent`, `ZiWeiSpecialistAgent`, `TarotDivinationAgent`, `MasterSynthesisAgent`, `GuardrailAgent`).
+  - Dynamic Model Router (`ModelRouter`) selecting fast vs deep synthesis model routes.
+  - Human-in-the-Loop (HITL) confirmation manager (`/api/hitl-confirm`).
+- **Observability & Tracing**:
+  - Structured JSON Logging using `pythonjsonlogger` with PII redaction.
+  - Explicit Intent vs Outcome Tracking (`log_intent_vs_outcome`).
+  - Real OpenTelemetry Distributed Tracing exported via `/api/traces` and displayed in the UI.
+  - Automated PII Redaction Engine (`PIIRedactor`) masking emails, phone numbers, SSNs, and credit cards.
+- **Infrastructure & CI/CD**:
+  - Automated Pytest Agent Regression Harness (`tests/`): 16 tests passing 100%.
+  - Infrastructure as Code (IaC): Terraform directory (`terraform/`) provisioning Cloud Run, Secret Manager, and IAM.
+  - Secure Secret Management via Google Cloud Secret Manager for `GEMINI_API_KEY`.
+  - GitHub Actions CI/CD Pipeline (`.github/workflows/ci.yml`).
 
 ---
 
@@ -33,79 +38,78 @@
 celestia-fortune-agent/
 ├── EVALUATION.md                  # Comprehensive evaluation & architecture specification document
 ├── README.md                      # Project overview & usage instructions
-├── Dockerfile                     # Multi-stage Docker build config
-├── package.json                   # Dependencies and scripts
-├── vite.config.js                 # Vite dev server configuration (Port 5000)
-├── tailwind.config.js             # Light macaron theme configuration
+├── Dockerfile                     # Multi-stage Python + React Docker build
+├── package.json                   # React dependencies and scripts
+├── vite.config.js                 # Vite dev server configuration
+├── terraform/                     # Infrastructure as Code (IaC)
+│   ├── main.tf                    # Cloud Run, Secret Manager, IAM resources
+│   ├── variables.tf               # Terraform variable definitions
+│   ├── outputs.tf                 # Cloud Run service URL outputs
+│   └── terraform.tfvars.example   # Example variables
 ├── .github/
 │   └── workflows/
 │       └── ci.yml                 # GitHub Actions CI/CD workflow
-├── backend/
-│   └── main.py                    # Python FastAPI backend service
-└── src/
-    ├── App.jsx                    # Main application orchestrator & state
-    ├── main.jsx                   # React entrypoint
-    ├── index.css                  # Base styles and scrollbar utilities
-    ├── components/
-    │   ├── Header.jsx             # Top bar with Astraea AI branding & 2-sentence signature
-    │   ├── Sidebar.jsx            # Left navigation sidebar (Destiny Reading & Logic Traces)
-    │   ├── InputForm.jsx          # Vertically centered birth date input card
-    │   ├── GeneralFateReport.jsx  # 4 Life Domains, Bazi, Tarot, & 5,000-word download button
-    │   ├── ConversationalChat.jsx # Interactive chat with suggested question pills
-    │   └── LogicTracesView.jsx    # Real-time span & trace inspector
-    └── utils/
-        ├── baziEngine.js          # Sexagenary Ganzhi & Wu Xing calculator
-        ├── ziweiEngine.js         # 12 Palaces & Primary Star matrix engine
-        ├── tarotEngine.js         # 78-card deck & 3-card spread drawer
-        ├── aiSynthesizer.js       # Report synthesizer & follow-up Q&A generator
-        └── reportGenerator.js     # 5,000-word downloadable report exporter
+├── backend/                       # Python FastAPI Backend
+│   ├── main.py                    # FastAPI application API entrypoint
+│   ├── config.py                  # Configuration & Secret Manager integration
+│   ├── schemas/                   # Pydantic tool, memory, and orchestration schemas
+│   ├── tools/                     # Bazi, Zi Wei, Tarot tools & ToolRegistry
+│   ├── memory/                    # Async SQLite DB, HistoryCompactor, AsyncMemoryManager
+│   ├── agent/                     # System prompts, Guardrails, Router, HITL, Orchestrator
+│   └── observability/             # JSON Logger, PII Redactor, OpenTelemetry Tracing
+├── tests/                         # Pytest Agent Regression Harness
+│   ├── test_tools.py
+│   ├── test_memory.py
+│   ├── test_orchestration.py
+│   ├── test_observability.py
+│   └── test_regression.py
+└── src/                           # React Frontend Application
 ```
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Local Development Server
+### 1. Backend Server & Virtualenv Setup
 
 ```bash
-# Clone the repository
-git clone https://github.com/alicelimingwang/astraea-ai-agent-app.git
-cd astraea-ai-agent-app
+# Set up Python virtual environment
+python3 -m venv venv
+source venv/bin/activate
+pip install -r backend/requirements.txt
 
-# Install dependencies
+# Start FastAPI backend server
+uvicorn backend.main:app --reload --port 8000
+```
+
+The API will be live at `http://localhost:8000` (OpenAPI Docs at `http://localhost:8000/docs`).
+
+### 2. Frontend Development Server
+
+```bash
+# Install Node dependencies
 npm install
 
-# Start the Vite development server (Port 5000)
+# Start Vite development server
 npm run dev
 ```
 
 Open your browser at `http://localhost:5000`.
 
-### 2. Production Build
+### 3. Run Automated Agent Test Harness
 
 ```bash
-npm run build
-npm run preview
+PYTHONPATH=. ./venv/bin/pytest tests/ -v
 ```
 
-### 3. Containerized Deployment (Docker)
+### 4. Deploy Infrastructure via Terraform
 
 ```bash
-docker build -t astraea-ai-agent .
-docker run -p 5000:5000 astraea-ai-agent
+cd terraform
+terraform init
+terraform plan -var-file="terraform.tfvars.example"
+terraform apply -var-file="terraform.tfvars.example"
 ```
-
----
-
-## 📊 Evaluation Criteria Mapping
-
-1. **Tool & Interface Design**: Light macaron UI, vertically centered input card, downloadable report, and interactive chat pills.
-2. **Context & Memory**: Session state retention for multi-turn Q&A without re-asking birth details.
-3. **Orchestration & Logic**: Deterministic Ganzhi math + Zi Wei matrix + Tarot RNG -> Generative synthesis with unknown time handling modes.
-4. **Observability & Tracing**: OpenTelemetry span tracking & dedicated "Logic & Traces" left nav view.
-5. **Infrastructure & CI/CD**: Multi-stage Dockerfile, FastAPI backend, and GitHub Actions CI/CD pipeline.
-
-See [`EVALUATION.md`](file:///home/admin_limingwang_altostrat_com/celestia-fortune-agent/EVALUATION.md) for full details.
 
 ---
 
